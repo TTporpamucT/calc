@@ -34,7 +34,7 @@ public class Main {
         }
 
 
-        public boolean isRoman(String number){
+        public boolean isRoman(String number) {
             return spravochik_R_v_A.containsKey(number.charAt(0));
         }
 
@@ -50,6 +50,7 @@ public class Main {
 
 
         }
+
         public int romanToInt(String s) {
             int end = s.length() - 1;
             char[] arr = s.toCharArray();
@@ -63,83 +64,82 @@ public class Main {
                 } else {
                     result += arabian;
                 }
-
-
             }
             return result;
 
         }
     }
 
+    //    public static String main(String input) {
+//
     public static void main(String[] args) {
-        Converter converter = new Converter();
-        String[] actions = {"+", "-", "/", "*"};
-        String[] regexActions = {"\\+", "-", "/", "\\*"};
         Scanner scn = new Scanner(System.in);
         System.out.print("Введите выражение: ");
         String exp = scn.nextLine();
-        if(exp.contains(",") | exp.contains(".")){System.out.println("ОШИБКА: Должны быть только целые числа.");
-            return;}
-        int actionIndex=-1;
+        String end = calc(exp);
+        System.out.println(end);
+    }
+    public static String calc(String input) {
+        Converter converter = new Converter();
+        String[] actions = {"+", "-", "/", "*"};
+        String[] regexActions = {"\\+", "-", "/", "\\*"};
+        {
+            if (input.contains(",") | input.contains("."))
+                throw new RuntimeException("Должны быть только целые числа");
+        }
+        int actionIndex = -1;
         for (int i = 0; i < actions.length; i++) {
-            if(exp.contains(actions[i])){
+            if (input.contains(actions[i])) {
                 actionIndex = i;
                 break;
             }
         }
-        if(actionIndex==-1){
-            System.out.println("ОШИБКА: Некорректное выражение");
-            return;
-        }
-        String[] data = exp.split(regexActions[actionIndex]);
-
-        if(converter.isRoman(data[0].trim()) == converter.isRoman(data[1].trim())){
-
-            int a,b;
-            boolean isRoman = converter.isRoman(data[0]);
-            if(isRoman){
-                a = converter.romanToInt(data[0].trim());
-                b = converter.romanToInt(data[1].trim());
-
-            }else{
-                    a = parseInt(data[0].trim());
-                    b = parseInt(data[1].trim());
-            }
-            int result;
-            switch (actions[actionIndex]){
-                case "+":
-                    result = a+b;
-                    break;
-                case "-":
-                    result = a-b;
-                    break;
-                case "*":
-                    result = a*b;
-                    break;
-                default:
-                    result = a/b;
-                    break;
-            }
-            if(a<=10 & b<=10){
-                if (isRoman) {
-                    if (result < 0) {
-                        System.out.println("ОШИБКА: Калькулятор не вычисляет отрицательные значения");
-                    } else {
-                        System.out.println(converter.intToRoman(result));
-                    }
-                }
-                    else {
-                        System.out.println(result);
-
-                }
-            }else{
-                System.out.println("ОШИБКА: Цифры не могут превышать 10.");}
-        }else{
-            System.out.println("ОШИБКА: Цифры должны быть в одном формате");
+        {
+            if (actionIndex == -1)
+                throw new RuntimeException("Некорректное выражение");
         }
 
+        String[] data = input.split(regexActions[actionIndex]);
+//            System.out.println(data.length);
+        {
+            if (data.length > 2)
+                throw new RuntimeException("Недопустимое количество цифр");
+        }
+        {
+            if (converter.isRoman(data[0].trim()) != converter.isRoman(data[1].trim()))
+                throw new RuntimeException("Калькулятор не вычисляет разные форматы чисел");
+        }
+        int a, b;
+        boolean isRoman = converter.isRoman(data[0]);
+        if (isRoman) {
+            a = converter.romanToInt(data[0].trim());
+            b = converter.romanToInt(data[1].trim());
 
+        } else {
+            a = parseInt(data[0].trim());
+            b = parseInt(data[1].trim());
+        }
+        int result;
+
+        switch (actions[actionIndex]) {
+            case "+":
+                result = a + b;
+                break;
+            case "-":
+                result = a - b;
+                break;
+            case "*":
+                result = a * b;
+                break;
+            default:
+                result = a / b;
+                break;
+        }
+        {if (a > 10 | b > 10) throw new RuntimeException("Цифры не могут превышать 10");}
+        if (isRoman) {
+            {if (result < 0) throw new RuntimeException("Калькулятор не вычисляет отрицательные значения");}
+            return String.valueOf(converter.intToRoman(result));
+        }
+    return String.valueOf(result);
     }
 }
-
-
